@@ -1,2 +1,2 @@
-# simple_journey
+# Simple Journey
 Simple console game. \ O /
