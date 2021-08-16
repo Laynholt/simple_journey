@@ -12,7 +12,7 @@ void clear_screen()
 {
 #if defined(UNIX) || defined(__unix__) || defined(LINUX) || defined(__linux__)
     printf("\x1b[%dJ", 2);
-#elif defined(WIN32)
+#elif defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
     system("cls");
 #endif
 }
@@ -44,7 +44,7 @@ int main()
             else if (keydown(KEY_A))
                 move(LEFT);
         }
-#elif defined(WIN32)|| defined(_WIN32) || defined(WIN64) || defined(_WIN64)
+#elif defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
     // Windows code
 #endif
     }
