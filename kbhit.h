@@ -3,6 +3,8 @@
     [https://github.com/lihexali/linux-kbhit]
 */
 
+#if defined(UNIX) || defined(__unix__) || defined(LINUX) || defined(__linux__)
+
 #ifndef _KBHIT_H_
 #define _KBHIT_H_
 
@@ -21,4 +23,5 @@ extern void term_restore();
 extern bool kbhit();
 extern bool keydown(const char* key);
 
+#endif
 #endif

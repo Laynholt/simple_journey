@@ -1,3 +1,5 @@
+#if defined(UNIX) || defined(__unix__) || defined(LINUX) || defined(__linux__)
+
 #include "kbhit.h"
 
 #include <poll.h>
@@ -68,3 +70,5 @@ bool keydown(const char* key)
 {
     return !strcmp(get, key);
 }
+
+#endif

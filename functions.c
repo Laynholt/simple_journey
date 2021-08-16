@@ -94,7 +94,23 @@ void show_info()
 
 void move(int8_t direction)
 {
+    // Сохраняем позицию курсора
+#if defined(UNIX) || defined(__unix__) || defined(LINUX) || defined(__linux__)
     printf("\x1b%d", 7);        // Сохраняем позицию курсора
+
+#elif defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
+    COORD pos;
+    CONSOLE_SCREEN_BUFFER_INFO cbsi;
+    HANDLE hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (GetConsoleScreenBufferInfo(hConsoleOutput, &cbsi))
+        pos = cbsi.dwCursorPosition;
+    else
+    {
+        pos.X = 0; pos.Y = 0;
+    }
+#endif
+
+    
 
     if (direction == RIGHT) 
     {
@@ -119,15 +135,14 @@ void move(int8_t direction)
     show_map();
     show_info();
 
+    // Получаем сохраненную позицию курсора
 #if defined(UNIX) || defined(__unix__) || defined(LINUX) || defined(__linux__)
     usleep(15000);
-#elif defined(WIN32)|| defined(_WIN32) || defined(WIN64) || defined(_WIN64)
-    Sleep(15);
-#endif
-
     // https://solarianprogrammer.com/2019/04/08/c-programming-ansi-escape-codes-windows-macos-linux-terminals/
     printf("\x1b%d", 8);        // Получаем сохраненную позицию курсора
-
+#elif defined(WIN32)|| defined(_WIN32) || defined(WIN64) || defined(_WIN64)
+    SetConsoleCursorPosition(hConsoleOutput, pos);
+#endif
 }
 
 void generate()
