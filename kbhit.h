@@ -1,3 +1,8 @@
+/*
+ * This code was taken from: 
+    [https://github.com/lihexali/linux-kbhit]
+*/
+
 #ifndef _KBHIT_H_
 #define _KBHIT_H_
 

@@ -3,15 +3,22 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
 
 #include <malloc.h>
-#include <signal.h>
 #include <math.h>
 #include <time.h>
+
+
+#if defined(UNIX) || defined(__unix__) || defined(LINUX) || defined(__linux__)
+#include <unistd.h>
+#include <signal.h>
+
+#elif defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
+#include <Windows.h>
+#endif
 
 #endif

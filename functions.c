@@ -119,7 +119,11 @@ void move(int8_t direction)
     show_map();
     show_info();
 
+#if defined(UNIX) || defined(__unix__) || defined(LINUX) || defined(__linux__)
     usleep(15000);
+#elif defined(WIN32)|| defined(_WIN32) || defined(WIN64) || defined(_WIN64)
+    Sleep(15);
+#endif
 
     // https://solarianprogrammer.com/2019/04/08/c-programming-ansi-escape-codes-windows-macos-linux-terminals/
     printf("\x1b%d", 8);        // Получаем сохраненную позицию курсора
