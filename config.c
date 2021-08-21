@@ -16,3 +16,5 @@ iPoint CameraPosition = {
                   .y = 0
 };
 
+
+char* palette_ground = " .:oO";

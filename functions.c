@@ -151,16 +151,29 @@ void generate()
     if (frame == 0)
     {
         srand(SEED);
-        // ландшафт
+        
+        // Облака
         generate_sun_and_clouds(0, SCREEN_WIDTH);
-        generate_landscape(0, SCREEN_HEIGHT / 3, SCREEN_WIDTH, SCREEN_HEIGHT);
+        // Горы
+        generate_landscape(0, SCREEN_HEIGHT / 8, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+        // Облака
+        //generate_sun_and_clouds(0, SCREEN_WIDTH);
+        // Ландшафт     
+        generate_landscape(0, SCREEN_HEIGHT / 4, SCREEN_WIDTH, SCREEN_HEIGHT);
+        // Деревья
         generate_trees(0, SCREEN_WIDTH);
     }
 
     else
-    { 
+    {    // Облака
         generate_sun_and_clouds(worldMap.iMapOldWidth, worldMap.iMapWidth);
-        generate_landscape(worldMap.iMapOldWidth, SCREEN_HEIGHT / 3, worldMap.iMapWidth, SCREEN_HEIGHT);
+        // Горы
+        generate_landscape(worldMap.iMapOldWidth, SCREEN_HEIGHT / 8, worldMap.iMapWidth, SCREEN_HEIGHT / 2);
+        // Облака
+        //generate_sun_and_clouds(worldMap.iMapOldWidth, worldMap.iMapWidth);
+        // Ландшафт
+        generate_landscape(worldMap.iMapOldWidth, SCREEN_HEIGHT / 4, worldMap.iMapWidth, SCREEN_HEIGHT);
+        // Деревья
         generate_trees(worldMap.iMapOldWidth, worldMap.iMapWidth);
     }
 
@@ -169,12 +182,15 @@ void generate()
 
 void generate_landscape(uint32_t min_w, uint16_t min_h, uint32_t max_w, uint16_t max_h)
 {
-   uint16_t start_y = SCREEN_HEIGHT - (rand() % (SCREEN_HEIGHT / 4) + rand() % 3) - 1;
-   uint16_t end_y = SCREEN_HEIGHT - (rand() % (SCREEN_HEIGHT / 4) + rand() % 5) - 1;
+   uint16_t start_y = max_h - (rand() % (min_h) + rand() % 3) - 1;
+   uint16_t end_y = max_h - (rand() % (min_h) + rand() % 5) - 1;
 
    // Отмечаем границы отрезков
-   worldMap.map[start_y][min_w] = 'O';
-   worldMap.map[end_y][max_w - 1] = 'O';
+   worldMap.map[start_y][min_w] = palette_ground[4];
+   worldMap.map[end_y][max_w - 1] = palette_ground[4];
+
+   filling_landscape(min_w, start_y);
+   filling_landscape(max_w - 1, end_y);
 
    // Заносим их в массив высот
    worldMap.iMapOfHeights[min_w] = start_y;
@@ -199,29 +215,32 @@ void midpoint_displacement(uint32_t leftX, uint16_t leftY, uint32_t rightX, uint
     }
     worldMap.iMapOfHeights[leftX + length / 2] = h;
 
-    char palette_ground[6] = " .:oO";
     worldMap.map[h][leftX + length / 2] = palette_ground[4];
-  
-    // Плавно зарисовываем грунт ландшафта
-    for(uint16_t y = h; y < worldMap.iMapHeight; y++)
-    {
-        uint16_t deltaY = worldMap.iMapHeight - h;
-        char color;
-
-        if (y > h && y <= h + deltaY / 4) color = palette_ground[3];
-        else if (y > h + deltaY / 4 && y <= h + deltaY / 2) color = palette_ground[2];
-        else if (y > h + deltaY / 2 && y <= h + 3 * deltaY / 4) color = palette_ground[1];
-        else color = palette_ground[0];
-
-        worldMap.map[y][leftX + length / 2] = color;
-    }
-
+    filling_landscape(leftX + length / 2, h); 
+    
     // Вызываем для левого и правого отрезков по рекурсии
     midpoint_displacement(leftX, leftY, leftX + length / 2, h, roughness);
     midpoint_displacement(leftX + length / 2, h, rightX, rightY, roughness);
 }
 
- void generate_trees(uint32_t min_w, uint32_t max_w)
+void filling_landscape(uint32_t x, uint16_t start_y)
+{ 
+    // Плавно зарисовываем грунт ландшафта
+    for(uint16_t y = start_y; y < worldMap.iMapHeight; y++)
+    {
+        uint16_t deltaY = worldMap.iMapHeight - start_y;
+        char color;
+
+        if (y > start_y && y <= start_y + deltaY / 4) color = palette_ground[3];
+        else if (y > start_y + deltaY / 4 && y <= start_y + deltaY / 2) color = palette_ground[2];
+        else if (y > start_y + deltaY / 2 && y <= start_y + 3 * deltaY / 4) color = palette_ground[1];
+        else color = palette_ground[0];
+
+        worldMap.map[y][x] = color;
+    }
+}
+
+void generate_trees(uint32_t min_w, uint32_t max_w)
 {
     char* trees[] = {
         " ^ /|\\/|\\",
@@ -276,7 +295,7 @@ void generate_sun_and_clouds(uint32_t min_w, uint32_t max_w)
             // Первые 4 облака рисуем у границы, чтобы убрать эффект рваности
             if (k < 4)  x = min_w + rand() % 2;
             else        x = min_w + rand() % (max_w - min_w - k) + k;
-            y = rand() % 5;
+            y = rand() % 10;
 
             randomCloud = rand() % 3;
 

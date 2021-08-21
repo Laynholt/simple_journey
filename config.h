@@ -9,7 +9,7 @@
 #define SEED 0
 
 #define TREES_ON 1
-#define TREES_NUM 4
+#define TREES_NUM 7
 
 #define CLOUDS_ON 1
 #define CLOUDS_NUM 20
@@ -52,5 +52,6 @@ enum eDirection
 
 extern sMap worldMap;
 extern iPoint CameraPosition;
+extern char* palette_ground; 
 
 #endif

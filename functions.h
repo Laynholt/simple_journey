@@ -29,5 +29,8 @@ extern void generate_sun_and_clouds(uint32_t min_w, uint32_t max_w);
 
 // supports functions for generate
 extern void midpoint_displacement(uint32_t leftX, uint16_t leftY, uint32_t rightX, uint16_t rightY, float roughness);
+extern void filling_landscape(uint32_t x, uint16_t start_y);
+
+
 
 #endif
