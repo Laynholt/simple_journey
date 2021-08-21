@@ -21,9 +21,9 @@ extern void move(int8_t direction);
 
 // generate funcitons
 extern void generate();
-extern void generate_landscape(uint32_t min_w, uint16_t min_h, uint32_t max_w, uint16_t max_h);
+extern void generate_landscape(uint32_t min_w, uint16_t min_h, uint32_t max_w, uint16_t max_h, float roughness);
 extern void generate_trees(uint32_t min_w, uint32_t max_w);
-extern void generate_sun_and_clouds(uint32_t min_w, uint32_t max_w);
+extern void generate_clouds(uint32_t min_w, uint32_t max_w);
 //extern void generate_starts();
 //extern void generate_weather();
 

@@ -153,26 +153,26 @@ void generate()
         srand(SEED);
         
         // Облака
-        generate_sun_and_clouds(0, SCREEN_WIDTH);
+        generate_clouds(0, SCREEN_WIDTH);
         // Горы
-        generate_landscape(0, SCREEN_HEIGHT / 8, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+        generate_landscape(0, SCREEN_HEIGHT / 8, SCREEN_WIDTH, SCREEN_HEIGHT / 2, 0.3f);
         // Облака
-        //generate_sun_and_clouds(0, SCREEN_WIDTH);
+        //generate_clouds(0, SCREEN_WIDTH);
         // Ландшафт     
-        generate_landscape(0, SCREEN_HEIGHT / 4, SCREEN_WIDTH, SCREEN_HEIGHT);
+        generate_landscape(0, SCREEN_HEIGHT / 4, SCREEN_WIDTH, SCREEN_HEIGHT, 0.3f);
         // Деревья
         generate_trees(0, SCREEN_WIDTH);
     }
 
     else
     {    // Облака
-        generate_sun_and_clouds(worldMap.iMapOldWidth, worldMap.iMapWidth);
+        generate_clouds(worldMap.iMapOldWidth, worldMap.iMapWidth);
         // Горы
-        generate_landscape(worldMap.iMapOldWidth, SCREEN_HEIGHT / 8, worldMap.iMapWidth, SCREEN_HEIGHT / 2);
+        generate_landscape(worldMap.iMapOldWidth, SCREEN_HEIGHT / 8, worldMap.iMapWidth, SCREEN_HEIGHT / 2, 0.3f);
         // Облака
-        //generate_sun_and_clouds(worldMap.iMapOldWidth, worldMap.iMapWidth);
+        //generate_clouds(worldMap.iMapOldWidth, worldMap.iMapWidth);
         // Ландшафт
-        generate_landscape(worldMap.iMapOldWidth, SCREEN_HEIGHT / 4, worldMap.iMapWidth, SCREEN_HEIGHT);
+        generate_landscape(worldMap.iMapOldWidth, SCREEN_HEIGHT / 4, worldMap.iMapWidth, SCREEN_HEIGHT, 0.3f);
         // Деревья
         generate_trees(worldMap.iMapOldWidth, worldMap.iMapWidth);
     }
@@ -180,7 +180,7 @@ void generate()
     frame++;
 }
 
-void generate_landscape(uint32_t min_w, uint16_t min_h, uint32_t max_w, uint16_t max_h)
+void generate_landscape(uint32_t min_w, uint16_t min_h, uint32_t max_w, uint16_t max_h, float roughness)
 {
    uint16_t start_y = max_h - (rand() % (min_h) + rand() % 3) - 1;
    uint16_t end_y = max_h - (rand() % (min_h) + rand() % 5) - 1;
@@ -196,7 +196,7 @@ void generate_landscape(uint32_t min_w, uint16_t min_h, uint32_t max_w, uint16_t
    worldMap.iMapOfHeights[min_w] = start_y;
    worldMap.iMapOfHeights[max_w - 1] = end_y;
  
-   midpoint_displacement(min_w, start_y, max_w - 1, end_y, 0.3f);
+   midpoint_displacement(min_w, start_y, max_w - 1, end_y, roughness);
 }
 
 void midpoint_displacement(uint32_t leftX, uint16_t leftY, uint32_t rightX, uint16_t rightY, float roughness)
@@ -277,7 +277,7 @@ void generate_trees(uint32_t min_w, uint32_t max_w)
     }
 }
 
-void generate_sun_and_clouds(uint32_t min_w, uint32_t max_w)
+void generate_clouds(uint32_t min_w, uint32_t max_w)
 {
     char* clouds[] = {
         "   .--.   .-(    ). (__.__)__)",
