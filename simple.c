@@ -2,25 +2,54 @@
 #include "functions.h"
 
 
-// Подключаем библиотеку для обработки клавиш в линукс
+// Для линукса
 #if defined(UNIX) || defined(__unix__) || defined(LINUX) || defined(__linux__)
+
+// Подключаем библиотеку для обработки клавиш в линукс
 #include "kbhit.h"
 
 static sig_atomic_t end = 0;
 static void sighandler(int signo)   { end = 1;}
-#endif
 
-void clear_screen() 
+int main()
 {
-#if defined(UNIX) || defined(__unix__) || defined(LINUX) || defined(__linux__)
+    bool exit = false;
+
+    // Обработчик сигналов для клавиш
+    term_setup(sighandler);
+
+    // Создание и генерация карты
+    worldMap.map = create_map();
+    clear_map(worldMap.map, 0);
+    generate();
+    move(STAND);
+
+    while (!exit)
+    {
+        // Обработчик клавиш в Линукс
+        if(kbhit())
+        {
+            if(keydown(KEY_ESC))
+                exit = true;
+            else if (keydown(KEY_D))
+                move(RIGHT);
+            else if (keydown(KEY_A))
+                move(LEFT);
+        }
+    }
+
+    // Обработчик сигналов для клавиш (Выкл)
+    term_restore();
+
+    free_all();
     printf("\x1b[%dJ", 2);
-#elif defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
-    system("cls");
-#endif
+    
+    return 0;
 }
 
-// Create console in Windows
-#if defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
+// Для Виндовса
+#elif defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
+
 void create_console()
 {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -59,19 +88,13 @@ void create_console()
 
     SetConsoleTitle(L"Simple Journey");
 }
-#endif
-
 
 int main()
 {
     bool exit = false;
 
-#if defined(UNIX) || defined(__unix__) || defined(LINUX) || defined(__linux__)
-    // Обработчик сигналов для клавиш
-    term_setup(sighandler);
-#elif defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
+    // Создание консоли опеределенных размеров
     create_console();
-#endif
 
     // Создание и генерация карты
     worldMap.map = create_map();
@@ -81,37 +104,18 @@ int main()
 
     while (!exit)
     {
-        // Обработчик клавиш в Линукс
-#if defined(UNIX) || defined(__unix__) || defined(LINUX) || defined(__linux__)
-        if(kbhit())
-        {
-            if(keydown(KEY_ESC))
-                exit = true;
-            else if (keydown(KEY_D))
-                move(RIGHT);
-            else if (keydown(KEY_A))
-                move(LEFT);
-        }
-
-        // Обработчик клавиш в Виндовс
-#elif defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
             exit = true;
         else if (GetAsyncKeyState('D') & 0x8000)
             move(RIGHT);
         else if (GetAsyncKeyState('A') & 0x8000)
             move(LEFT);
-#endif
-
     }
 
-    // Обработчик сигналов для клавиш (Выкл)
-#if defined(UNIX) || defined(__unix__) || defined(LINUX) || defined(__linux__)
-    term_restore();
-#endif
-
     free_all();
-    clear_screen();
+    system("cls");
 
     return 0;
 }
+
+#endif
