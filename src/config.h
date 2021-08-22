@@ -16,6 +16,14 @@
 
 #define SPEED 2
 
+
+typedef struct
+{
+    uint32_t x;
+    uint16_t y;
+
+}iPoint;
+
 typedef struct
 {
     uint32_t iMapWidth;              // Ширина карты
@@ -27,18 +35,15 @@ typedef struct
     uint16_t iMapFrameCount;         // Количество созданных кадров (сцен)
 
     uint32_t iMapSize;
+    uint32_t iMapOfHeightsSize;
+    uint32_t iMapOfCloudsSize;
+    uint32_t iMapFullSize;
 
     char** map;
-    uint16_t* iMapOfHeights;        // Карта высот
+    uint16_t* mapOfHeights;        // Карта высот
+    iPoint* mapOfClouds;
 
 }sMap;
-
-typedef struct
-{
-    uint32_t x;
-    uint16_t y;
-
-}iPoint;
 
 enum eDirection
 {

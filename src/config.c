@@ -6,8 +6,12 @@ sMap worldMap  = {.iMapWidth = SCREEN_WIDTH,
                   .iMapOldHeight = SCREEN_HEIGHT,
                   .iMapFrameCount = 1,
                   .iMapSize = SCREEN_HEIGHT * SCREEN_WIDTH,
+                  .iMapOfHeightsSize = 0,
+                  .iMapOfCloudsSize = 0,
+                  .iMapFullSize = SCREEN_HEIGHT * SCREEN_WIDTH,
                   .map = NULL,
-                  .iMapOfHeights = NULL
+                  .mapOfHeights = NULL,
+                  .mapOfClouds = NULL
 };
 
 

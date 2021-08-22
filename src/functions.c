@@ -1,68 +1,67 @@
 #include "functions.h"
 
-char** create_map()
+char** memory_allocate()
 {
-    char** ptrOnTheMap = (char**)malloc(worldMap.iMapHeight * sizeof(char*) + worldMap.iMapSize * sizeof(char));
-    char* start = (char*)ptrOnTheMap + worldMap.iMapHeight * sizeof(char*);
+    uint32_t worldMapSize = worldMap.iMapHeight * sizeof(char*) + worldMap.iMapSize * sizeof(char);
+    uint32_t mapOfHeightsSize = worldMap.iMapWidth * sizeof(uint16_t);
+    uint32_t mapOfCloudsSize = 0;
 
-    for(uint16_t i = 0; i < worldMap.iMapHeight; i++)
-    {
-        ptrOnTheMap[i] = start + i * worldMap.iMapWidth;
-    }
+    worldMap.iMapFullSize = worldMapSize + mapOfHeightsSize + mapOfCloudsSize;
 
-    // Создаем или перевыделяем память для массива высот
-    create_map_of_heights();
-
-    return ptrOnTheMap;
+    char** ptr = (char**)malloc(worldMap.iMapFullSize);
+    return ptr;
 }
 
-void create_map_of_heights()
-{
-    uint16_t* ptr = (uint16_t*)malloc(worldMap.iMapWidth * sizeof(uint16_t));
-    
-    // Если это первое выделение, то просто присваиваем, иначе еще копируем старые данные
-    if (worldMap.iMapOfHeights == NULL)
-        worldMap.iMapOfHeights = ptr;
-    else
-    {
-        memcpy(ptr, worldMap.iMapOfHeights, sizeof(uint16_t) * worldMap.iMapOldWidth);
-        free(worldMap.iMapOfHeights);
-        worldMap.iMapOfHeights = ptr;
-    }
-}
-
-void resize_map()
+void create_map()
 {
     worldMap.iMapSize = worldMap.iMapWidth * worldMap.iMapHeight;
 
-    char** tempPtrOnTheMap = create_map();                        // Создание новой карты
-    clear_map(tempPtrOnTheMap, 0);                                // Отчистка новой карты
+    char** ptr = memory_allocate();
+    uint16_t* ptrHeight;
 
-    // Перенос данных из старой в новую
-    for(uint16_t i = 0; i < worldMap.iMapOldHeight; i++)
+    // Операции с массивом map
+    char* start = (char*)ptr + worldMap.iMapHeight * sizeof(char*);
+    
+    for(uint16_t i = 0; i < worldMap.iMapHeight; i++)
     {
-        memcpy(tempPtrOnTheMap[i], worldMap.map[i], worldMap.iMapOldWidth);
+        ptr[i] = start + i * worldMap.iMapWidth;
     }
+    clear_map(ptr, 0);
 
-    destruct_map();
-    worldMap.map = tempPtrOnTheMap;
+    // Операции с массивом высот
+    ptrHeight = (uint16_t*)((char*)ptr + worldMap.iMapHeight * sizeof(char*) + worldMap.iMapSize * sizeof(char));
 
-    // Вызываем функции генерации окружения
-    generate();
 
-    worldMap.iMapOldHeight = worldMap.iMapHeight;
-    worldMap.iMapOldWidth = worldMap.iMapWidth;
+    // Карта уже существует, делаем ресайз
+    if(worldMap.map != NULL)
+    {
+        // Перенос данных из старой в новую Map
+        for(uint16_t i = 0; i < worldMap.iMapOldHeight; i++)
+        {
+            memcpy(ptr[i], worldMap.map[i], worldMap.iMapOldWidth);
+        }
+
+        // Копируем карту высот
+        memcpy(ptrHeight, worldMap.mapOfHeights, sizeof(uint16_t) * worldMap.iMapOldWidth);
+
+        destruct_map();
+   }
+    
+   worldMap.map = ptr;
+   worldMap.mapOfHeights = ptrHeight;
+
+   worldMap.iMapOfHeightsSize = worldMap.iMapWidth;
+
+   // Вызываем функции генерации окружения
+   generate();
+
+   worldMap.iMapOldHeight = worldMap.iMapHeight;
+   worldMap.iMapOldWidth = worldMap.iMapWidth;
 }
 
 void destruct_map()
 {
     free(worldMap.map);
-}
-
-void free_all()
-{
-    free(worldMap.map);
-    free(worldMap.iMapOfHeights);
 }
 
 void clear_map(char** map, int16_t numOfFrame)
@@ -74,13 +73,19 @@ void clear_map(char** map, int16_t numOfFrame)
 
 void show_map()
 {
+    char tmp[SCREEN_WIDTH + 1];
+
     printf("\n");
     for (uint16_t i = CameraPosition.y; i < SCREEN_HEIGHT + CameraPosition.y; i++)
     {
+        uint16_t k = 0;
         for(uint16_t j = CameraPosition.x; j < SCREEN_WIDTH + CameraPosition.x; j++)
         {
-            putchar(worldMap.map[i][j]);
+            tmp[k++] = worldMap.map[i][j];
+           // putchar(worldMap.map[i][j]);
         }
+        tmp[k] = '\0';
+        puts(tmp);
     }
 }
 
@@ -117,7 +122,7 @@ void move(int8_t direction)
         if (CameraPosition.x + SCREEN_WIDTH + SPEED >= worldMap.iMapWidth)
         {
             worldMap.iMapWidth += SCREEN_WIDTH;
-            resize_map();
+            create_map();
             worldMap.iMapFrameCount++;
         }
 
@@ -193,8 +198,8 @@ void generate_landscape(uint32_t min_w, uint16_t min_h, uint32_t max_w, uint16_t
    filling_landscape(max_w - 1, end_y);
 
    // Заносим их в массив высот
-   worldMap.iMapOfHeights[min_w] = start_y;
-   worldMap.iMapOfHeights[max_w - 1] = end_y;
+   worldMap.mapOfHeights[min_w] = start_y;
+   worldMap.mapOfHeights[max_w - 1] = end_y;
  
    midpoint_displacement(min_w, start_y, max_w - 1, end_y, roughness);
 }
@@ -213,7 +218,7 @@ void midpoint_displacement(uint32_t leftX, uint16_t leftY, uint32_t rightX, uint
         randomVal = (rand() % (int32_t)(roughness * (length) * 2)) - length * roughness;
         h = (leftY + rightY) / 2 + randomVal;
     }
-    worldMap.iMapOfHeights[leftX + length / 2] = h;
+    worldMap.mapOfHeights[leftX + length / 2] = h;
 
     worldMap.map[h][leftX + length / 2] = palette_ground[4];
     filling_landscape(leftX + length / 2, h); 
@@ -260,7 +265,7 @@ void generate_trees(uint32_t min_w, uint32_t max_w)
         {
             // Генерируем случайный Х и получаем соответствующую ему высоту из массива высот
             x = min_w + rand() % (max_w - min_w - 15) + 5;
-            y = worldMap.iMapOfHeights[x] - 2;
+            y = worldMap.mapOfHeights[x] - 2;
 
             randomTree = rand() % 3;
 

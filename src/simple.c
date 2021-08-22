@@ -19,9 +19,7 @@ int main()
     term_setup(sighandler);
 
     // Создание и генерация карты
-    worldMap.map = create_map();
-    clear_map(worldMap.map, 0);
-    generate();
+    create_map();
     move(STAND);
 
     while (!exit)
@@ -41,7 +39,7 @@ int main()
     // Обработчик сигналов для клавиш (Выкл)
     term_restore();
 
-    free_all();
+    destruct_map();
     printf("\x1b[%dJ", 2);
     
     return 0;
@@ -97,9 +95,7 @@ int main()
     create_console();
 
     // Создание и генерация карты
-    worldMap.map = create_map();
-    clear_map(worldMap.map, 0);
-    generate();
+    create_map();
     move(STAND);
 
     while (!exit)
@@ -112,7 +108,7 @@ int main()
             move(LEFT);
     }
 
-    free_all();
+    destruct_map();
     system("cls");
 
     return 0;

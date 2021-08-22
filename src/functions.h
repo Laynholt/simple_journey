@@ -5,11 +5,9 @@
 #include "config.h"
 
 // main map funcitons
-extern char** create_map();
+extern char** memory_allocate();
+extern void create_map();
 extern void destruct_map();
-
-extern void create_map_of_heights();
-extern void free_all();
 
 // other map funcitons
 extern void clear_map(char** map, int16_t numOfFrame);
