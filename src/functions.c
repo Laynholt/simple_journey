@@ -144,6 +144,7 @@ void move(int8_t direction)
 #if defined(UNIX) || defined(__unix__) || defined(LINUX) || defined(__linux__)
     // https://solarianprogrammer.com/2019/04/08/c-programming-ansi-escape-codes-windows-macos-linux-terminals/
     printf("\x1b%d", 8);        // Получаем сохраненную позицию курсора
+
 #elif defined(WIN32)|| defined(_WIN32) || defined(WIN64) || defined(_WIN64)
     SetConsoleCursorPosition(hConsoleOutput, pos);
 #endif

@@ -32,8 +32,10 @@ int main()
             else if (keydown(KEY_D))
                 move(RIGHT);
             else if (keydown(KEY_A))
-                move(LEFT);
+                move(LEFT);            
         }
+
+        usleep(15000);
     }
 
     // Обработчик сигналов для клавиш (Выкл)
@@ -98,23 +100,16 @@ int main()
     create_map();
     move(STAND);
 
-    clock_t prevFrame = clock();
-
     while (!exit)
     {
-        clock_t nextFrame = clock();
+        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
+            exit = true;
+        else if (GetAsyncKeyState('D') & 0x8000)
+            move(RIGHT);
+        else if (GetAsyncKeyState('A') & 0x8000)
+            move(LEFT);
 
-        if (nextFrame - prevFrame > 50)
-        {
-            if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
-                exit = true;
-            else if (GetAsyncKeyState('D') & 0x8000)
-                move(RIGHT);
-            else if (GetAsyncKeyState('A') & 0x8000)
-                move(LEFT);
-            
-            prevFrame = nextFrame;
-        }
+        Sleep(50);
     }
 
     destruct_map();
