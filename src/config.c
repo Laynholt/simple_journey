@@ -1,10 +1,10 @@
 #include "config.h"
 
-sMap worldMap  = {.iMapWidth = SCREEN_WIDTH,
+sMap worldMap  = {.iMapWidth = SCREEN_WIDTH * NUM_MALLOC_FRAME,
                   .iMapHeight = SCREEN_HEIGHT,
-                  .iMapOldWidth = SCREEN_WIDTH,
-                  .iMapOldHeight = SCREEN_HEIGHT,
-                  .iMapFrameCount = 1,
+                  .iMapOldWidth = 0,
+                  .iMapOldHeight = 0,
+                  .iMapFrameCount = NUM_MALLOC_FRAME,
                   .iMapSize = SCREEN_HEIGHT * SCREEN_WIDTH,
                   .iMapOfHeightsSize = 0,
                   .iMapOfCloudsSize = 0,

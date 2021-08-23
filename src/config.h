@@ -7,14 +7,14 @@
 #define SCREEN_HEIGHT 32            // Высота экрана
 
 #define SEED 0
+#define SPEED 2
+#define NUM_MALLOC_FRAME 5
 
 #define TREES_ON 1
-#define TREES_NUM 7
+#define TREES_NUM 7 * NUM_MALLOC_FRAME
 
 #define CLOUDS_ON 1
-#define CLOUDS_NUM 20
-
-#define SPEED 2
+#define CLOUDS_NUM 10 * NUM_MALLOC_FRAME
 
 
 typedef struct

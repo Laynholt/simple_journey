@@ -121,9 +121,9 @@ void move(int8_t direction)
     {
         if (CameraPosition.x + SCREEN_WIDTH + SPEED >= worldMap.iMapWidth)
         {
-            worldMap.iMapWidth += SCREEN_WIDTH;
+            worldMap.iMapWidth += (SCREEN_WIDTH * NUM_MALLOC_FRAME);
             create_map();
-            worldMap.iMapFrameCount++;
+            worldMap.iMapFrameCount += NUM_MALLOC_FRAME;
         }
 
         CameraPosition.x += SPEED;
@@ -158,15 +158,15 @@ void generate()
         srand(SEED);
         
         // Облака
-        generate_clouds(0, SCREEN_WIDTH);
+        generate_clouds(0, worldMap.iMapWidth);
         // Горы
-        generate_landscape(0, SCREEN_HEIGHT / 8, SCREEN_WIDTH, SCREEN_HEIGHT / 2, 0.3f);
+        generate_landscape(0, SCREEN_HEIGHT / 8, worldMap.iMapWidth, SCREEN_HEIGHT / 2, 0.3f);
         // Облака
-        //generate_clouds(0, SCREEN_WIDTH);
+        //generate_clouds(0, worldMap.iMapWidth);
         // Ландшафт     
-        generate_landscape(0, SCREEN_HEIGHT / 4, SCREEN_WIDTH, SCREEN_HEIGHT, 0.3f);
+        generate_landscape(0, SCREEN_HEIGHT / 4, worldMap.iMapWidth, SCREEN_HEIGHT, 0.3f);
         // Деревья
-        generate_trees(0, SCREEN_WIDTH);
+        generate_trees(0, worldMap.iMapWidth);
     }
 
     else
